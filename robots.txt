@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://joyharness.app/sitemap.xml
+Sitemap: https://joyharness.pages.dev/sitemap.xml
 
 User-agent: GPTBot
 Allow: /

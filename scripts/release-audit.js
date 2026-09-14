@@ -101,7 +101,7 @@ function assert(condition, message) {
   for (const canonical of canonicals) assert(sitemap.includes(canonical), `${canonical}: missing from sitemap`);
 
   const robots = await (await page.request.get(`${siteUrl}/robots.txt`)).text();
-  assert(robots.includes("Sitemap: https://joyharness.app/sitemap.xml"), "robots.txt: sitemap missing");
+  assert(robots.includes("Sitemap: https://joyharness.pages.dev/sitemap.xml"), "robots.txt: sitemap missing");
   assert(robots.includes("GPTBot") && robots.includes("ClaudeBot") && robots.includes("PerplexityBot"), "robots.txt: generative search crawlers not declared");
 
   const llms = await (await page.request.get(`${siteUrl}/llms.txt`)).text();

@@ -1972,5 +1972,18 @@ kbd {
   .scenes-heading h2 { white-space: nowrap; }
 }
 
-@media (min-width: 821px) { .hero h1 { white-space: nowrap; } .hero-note { white-space: nowrap; } }
+/* 这几行曾经是 white-space: nowrap。
+ *
+ * 意图是"标题别断在奇怪的地方"，但 nowrap 不会让文字缩，只会让它溢出：
+ * 首屏两栏布局下，左栏在 1024px 视口只有 365px 宽，而标题需要 704px，
+ * 于是 339px 的字直接画到了右边的产品截图上。因为溢出的是字形、不是盒子，
+ * 元素的 getBoundingClientRect 完全正常，遮挡检查也就查不出来。
+ *
+ * 换成给一个够宽的 measure：放得下就是一行，放不下就正常折行。
+ * scripts/validate-site.js 里现在有一条断言专门盯着"文字画出盒子外"。 */
+.hero h1 { text-wrap: balance; }
+@media (min-width: 821px) {
+  .hero h1 { max-width: 740px; }
+  .hero-note { white-space: nowrap; }
+}
 @media (max-width: 820px) { .hero-note { white-space: normal; } }

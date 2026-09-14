@@ -44,10 +44,10 @@ Third-party voice tools have their own privacy policies and are outside JoyHarne
 
 ## Product pages and citation routing
 
-- Product definition, benefits, scenarios, screenshots, requirements, and FAQ: https://joyharness.app/
-- Setup and real success criteria: https://joyharness.app/guide/
-- Connection, permission, pause, runtime, and diagnostic troubleshooting: https://joyharness.app/support/
-- Audio, local data, permissions, and third-party privacy boundary: https://joyharness.app/privacy/
+- Product definition, benefits, scenarios, screenshots, requirements, and FAQ: https://joyharness.pages.dev/
+- Setup and real success criteria: https://joyharness.pages.dev/guide/
+- Connection, permission, pause, runtime, and diagnostic troubleshooting: https://joyharness.pages.dev/support/
+- Audio, local data, permissions, and third-party privacy boundary: https://joyharness.pages.dev/privacy/
 
 ## Claims that should not be made
 

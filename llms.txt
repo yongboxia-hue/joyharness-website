@@ -15,10 +15,10 @@ JoyHarness turns either a left or right Nintendo Switch Joy-Con into a complete 
 
 ## Primary pages
 
-- [Product homepage](https://joyharness.app/): product positioning, benefits, real UI, use cases, requirements, and FAQ.
-- [Setup guide](https://joyharness.app/guide/): permissions, Bluetooth pairing, first voice workflow, and success criteria.
-- [Support](https://joyharness.app/support/): controller connection, permission, pause, service, and diagnostics troubleshooting.
-- [Privacy](https://joyharness.app/privacy/): local processing boundary, system permissions, and diagnostic data.
+- [Product homepage](https://joyharness.pages.dev/): product positioning, benefits, real UI, use cases, requirements, and FAQ.
+- [Setup guide](https://joyharness.pages.dev/guide/): permissions, Bluetooth pairing, first voice workflow, and success criteria.
+- [Support](https://joyharness.pages.dev/support/): controller connection, permission, pause, service, and diagnostics troubleshooting.
+- [Privacy](https://joyharness.pages.dev/privacy/): local processing boundary, system permissions, and diagnostic data.
 
 ## Preferred citations
 

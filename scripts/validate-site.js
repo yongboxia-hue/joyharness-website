@@ -25,6 +25,42 @@ async function assertNoOverflow(page, label) {
   assert(overflow.page <= overflow.viewport + 1, `${label}: horizontal overflow ${overflow.page}/${overflow.viewport}`);
 }
 
+
+// 文字画到自己盒子外面。
+//
+// white-space: nowrap 不会让文字缩，只会让它溢出。首屏标题就这样把 339px 的字
+// 画到了右边的产品截图上 —— 而元素的 getBoundingClientRect 完全正常，所以按盒子
+// 算的遮挡检查一条都没报。这里用 Range 量真实的字形范围，比盒子宽出一截就是错。
+async function assertTextStaysInItsBox(page, label) {
+  const spills = await page.evaluate(() => {
+    const out = [];
+    for (const el of document.querySelectorAll("h1, h2, h3, p, li, a, span, strong")) {
+      if (!el.firstChild || el.querySelector("*")) continue;
+      const box = el.getBoundingClientRect();
+      if (box.width === 0) continue;
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const rects = [...range.getClientRects()];
+      if (rects.length === 0) continue;
+      const textRight = Math.max(...rects.map((r) => r.right));
+      const textLeft = Math.min(...rects.map((r) => r.left));
+      // 1px 容差：字体的抗锯齿边缘本来就会略微出界。
+      const spill = Math.max(textRight - box.right, box.left - textLeft);
+      if (spill > 1) {
+        out.push({
+          text: (el.textContent || "").trim().slice(0, 20),
+          selector: el.tagName.toLowerCase() + (el.className ? "." + String(el.className).split(" ")[0] : ""),
+          spill: Math.round(spill),
+        });
+      }
+    }
+    return out;
+  });
+  for (const s of spills) {
+    errors.push(`${label}: 「${s.text}」的文字画出盒子 ${s.spill}px（${s.selector}）—— 多半是 white-space: nowrap 遇上了放不下的栏宽`);
+  }
+}
+
 (async () => {
   server = await ensureServer(siteUrl);
   browser = await chromium.launch({ headless: true, executablePath: edgePath });
@@ -46,7 +82,7 @@ async function assertNoOverflow(page, label) {
     assert((await auditPage.title()).includes(target.title), `${target.path}: title mismatch`);
     assert((await auditPage.locator("h1").first().innerText()).includes(target.h1), `${target.path}: H1 mismatch`);
     assert((await auditPage.locator("meta[name='description']").getAttribute("content")).length >= 55, `${target.path}: weak meta description`);
-    assert((await auditPage.locator("link[rel='canonical']").getAttribute("href")).startsWith("https://joyharness.app"), `${target.path}: canonical missing`);
+    assert((await auditPage.locator("link[rel='canonical']").getAttribute("href")).startsWith("https://joyharness.pages.dev"), `${target.path}: canonical missing`);
     await assertNoOverflow(auditPage, target.path);
     results.push({ page: target.path, seo: true, content: true, pass: true });
   }
@@ -78,6 +114,9 @@ async function assertNoOverflow(page, label) {
 
   for (const viewport of [
     { label: "desktop", width: 1440, height: 1000 },
+    // 1024 和 1440 之间过去是空白地带。首屏标题的溢出就发生在这一段：
+    // 两栏还没塌成单栏，但左栏已经窄到放不下一整行标题。
+    { label: "small-desktop", width: 1180, height: 900 },
     { label: "laptop", width: 1024, height: 768 },
     { label: "mobile", width: 390, height: 844 },
     { label: "small-mobile", width: 320, height: 700 },
@@ -108,6 +147,7 @@ async function assertNoOverflow(page, label) {
     assert((await page.locator("body").innerText()).includes("不录音"), `${viewport.label}: privacy boundary missing`);
     assert(await page.locator(".hero-window").evaluate((image) => image.complete && image.naturalWidth > 0), `${viewport.label}: hero screenshot missing`);
     await assertNoOverflow(page, viewport.label);
+    await assertTextStaysInItsBox(page, viewport.label);
     // 表面色：整页只允许 系统里的三种 —— 暖白 / 纯白 / 深色，且深色只在结尾出现一次。
     // 之前是 7 种，其中 4 种是绕过设计系统的硬编码（两种冷灰、第三种蓝、第四种黑），
     // 暖白和冷灰交替出现，看上去就是几块不同时候做的东西拼在一起。
@@ -177,7 +217,14 @@ async function assertNoOverflow(page, label) {
         page.locator("[data-download-button]").click(),
       ]);
       void download;
-      assert(page.url().startsWith(downloadTarget), `${viewport.label}: download button did not reach ${downloadTarget}`);
+      // /releases/latest 是一个跳转：GitHub 会把它换成具体的 tag
+      // （.../releases/tag/v0.1.6）。所以不能要求最终地址还以 /latest 开头 ——
+      // 这条断言此前之所以通过，只是因为仓库还是私有的，GitHub 对未登录访问
+      // 直接 404 而不跳转，地址就停在原处。仓库一公开，按钮开始真正工作，
+      // 断言反而失败了。要确认的是"到了这个仓库的 releases 区"。
+      const reachedReleases = page.url().startsWith(downloadTarget)
+        || /^https:\/\/github\.com\/yongboxia-hue\/joyharness\/releases\//.test(page.url());
+      assert(reachedReleases, `${viewport.label}: download button reached ${page.url()}, expected the releases page`);
       await page.goBack({ waitUntil: "networkidle" });
     } else {
       await page.locator("[data-download-button]").click();
