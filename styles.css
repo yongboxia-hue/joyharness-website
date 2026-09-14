@@ -1986,11 +1986,13 @@ kbd {
   .hero h1 { max-width: 740px; }
   .hero-note { white-space: nowrap; }
 }
-/* 首屏两栏之间这一段，左栏只有约 365px，而 --text-display 是按视口宽度算的，
- * 到 1024px 就顶到 64px 上限了 —— 一行放不下 6 个汉字，标题被切成三段碎行。
- * 这里按左栏实际能放下的字数收一档：约 51px 时「把语音输入，」正好一行，
- * 「握在手里。」一行，两行干净收尾。 */
+/* 首屏两栏之间这一段，左栏只有约 365px，而 --text-display 到 1024px 就顶到
+ * 64px 上限 —— 一行放不下 6 个汉字，标题被切成三段碎行。
+ *
+ * 这里降到字阶的下一档，而不是另写一个 clamp：站点的样式约束里有一条
+ * "font-size 不得直接用 vw"（见 scripts/release-audit.js），自造尺寸会绕开
+ * 那五级字阶，也确实被那条断言拦下来过。 */
 @media (min-width: 821px) and (max-width: 1199px) {
-  .hero h1 { font-size: clamp(38px, 5vw, 56px); }
+  .hero h1 { font-size: var(--text-title); }
 }
 @media (max-width: 820px) { .hero-note { white-space: normal; } }
