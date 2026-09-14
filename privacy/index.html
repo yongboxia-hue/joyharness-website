@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="JoyHarness 隐私说明：应用只接收 Joy-Con 按键并发送本地快捷键，不录音、不读取语音内容；连接状态、配置和诊断信息保存在本机。" />
+    <meta name="theme-color" content="#f7f7f4" />
+    <meta property="og:title" content="JoyHarness 隐私说明｜不录音，不读取语音内容" />
+    <meta property="og:description" content="了解 JoyHarness 使用哪些系统权限、哪些数据留在本机，以及诊断信息包含什么。" />
+    <meta property="og:url" content="https://joyharness.app/privacy/" />
+    <link rel="canonical" href="https://joyharness.app/privacy/" />
+    <link rel="icon" href="../assets/brand-icon.png" type="image/png" />
+    <link rel="stylesheet" href="../styles.css" />
+    <title>JoyHarness 隐私说明｜不录音，不读取语音内容</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="site-header is-scrolled" data-header><a class="brand" href="../"><img src="../assets/brand-icon.png" alt="" width="40" height="40" /><span>JoyHarness</span></a><button class="nav-toggle icon-button" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><span></span><span></span></button><nav class="site-nav" id="site-nav" aria-label="主导航" data-nav><a href="../#workflow">产品</a><a href="../guide/">上手指南</a><a href="../support/">支持</a><a href="./" aria-current="page">隐私</a></nav><a class="header-cta" href="../#download">获取 macOS 版</a></header>
+    <main id="main" class="info-main">
+      <header class="info-hero section-shell"><p class="eyebrow">隐私说明 · 更新于 2026-08-26</p><h1>你的声音，不经过 JoyHarness。</h1><p>JoyHarness 是本地快捷键工具。它读取 Joy-Con 的实体按键，并在 Mac 上执行你配置的动作；语音识别由你选择的语音输入工具负责。</p></header>
+      <div class="info-body section-shell"><aside class="info-toc"><strong>本页内容</strong><a href="#boundary">能力边界</a><a href="#local-data">本地数据</a><a href="#permissions">系统权限</a><a href="#diagnostics">诊断信息</a><a href="#third-party">第三方工具</a></aside><article class="info-content">
+        <section id="boundary"><h2>JoyHarness 不录音，也不读取语音内容</h2><p>JoyHarness 不提供麦克风采集、语音识别或云端转写。它只把实体按键转换为快捷键，因此无法访问你通过 Typeless、豆包或其他工具说出的内容。</p></section>
+        <section id="local-data"><h2>配置与运行状态保存在本机</h2><p>按键映射、手柄连接状态、暂停状态和运行诊断保存在你的 Mac 上，用于显示当前状态、恢复服务和保留自定义配置。</p></section>
+        <section id="permissions"><h2>为什么需要辅助功能权限</h2><div class="fact-table"><div><strong>辅助功能</strong><span>向当前应用发送快捷键</span></div></div><p>JoyHarness 通过手柄接口读取 Joy-Con，不申请输入监控权限，也不监听键盘输入。</p></section>
+        <section id="diagnostics"><h2>诊断信息由你主动导出</h2><p>当你选择“导出诊断信息”时，文件可能包含应用版本、连接状态、权限状态、后台服务状态与错误信息。它不包含录音或语音文字。是否分享诊断文件由你决定。</p></section>
+        <section id="third-party"><h2>第三方语音工具有各自的隐私规则</h2><p>Typeless、豆包和其他语音输入工具如何处理音频与文字，不在 JoyHarness 的控制范围内。使用前请查看对应工具的隐私政策与数据设置。</p></section>
+      </article></div>
+    </main>
+    <footer class="site-footer compact-footer"><div class="footer-main"><div class="footer-identity"><a class="brand footer-brand" href="../"><img src="../assets/brand-icon.png" alt="" width="40" height="40" /><span>JoyHarness</span></a><p>把语音输入，握在手里。</p></div><nav aria-label="页脚导航"><a href="../">官网</a><a href="../guide/">上手指南</a><a href="../support/">支持</a></nav></div><div class="footer-meta"><span>© 2026 JoyHarness</span><span>macOS 13+ · MIT Licensed</span></div></footer>
+    <script src="../app.js"></script>
+  </body>
+</html>

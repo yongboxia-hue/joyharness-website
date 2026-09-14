@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="JoyHarness 支持中心：解决 Joy-Con 无法连接、按键没有响应、macOS 权限未完成、后台服务异常和配置保存问题。" />
+    <meta name="theme-color" content="#f7f7f4" />
+    <meta property="og:title" content="JoyHarness 支持｜连接、权限与按键响应排查" />
+    <meta property="og:description" content="按当前状态快速定位 Joy-Con 连接、macOS 权限与按键响应问题。" />
+    <meta property="og:url" content="https://joyharness.app/support/" />
+    <link rel="canonical" href="https://joyharness.app/support/" />
+    <link rel="icon" href="../assets/brand-icon.png" type="image/png" />
+    <link rel="stylesheet" href="../styles.css" />
+    <title>JoyHarness 支持｜连接、权限与按键响应排查</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="site-header is-scrolled" data-header><a class="brand" href="../"><img src="../assets/brand-icon.png" alt="" width="40" height="40" /><span>JoyHarness</span></a><button class="nav-toggle icon-button" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><span></span><span></span></button><nav class="site-nav" id="site-nav" aria-label="主导航" data-nav><a href="../#workflow">产品</a><a href="../#product">产品界面</a><a href="../guide/">上手指南</a><a href="./" aria-current="page">支持</a></nav><a class="header-cta" href="../#download">获取 macOS 版</a></header>
+
+    <main id="main" class="info-main">
+      <header class="info-hero section-shell"><p class="eyebrow">JoyHarness 支持</p><h1>先看当前状态，再做对应处理。</h1><p>连接页会优先显示最影响使用的问题。按照下面与页面状态一致的入口处理，不需要反复重装。</p></header>
+      <div class="info-body section-shell">
+        <aside class="info-toc" aria-label="本页目录"><strong>快速定位</strong><a href="#disconnected">手柄未连接</a><a href="#no-output">按键没有输出</a><a href="#paused">已暂停响应</a><a href="#service">后台服务异常</a><a href="#diagnostics">导出诊断</a></aside>
+        <article class="info-content support-content">
+          <section id="disconnected"><p class="info-step-label">连接</p><h2>Joy-Con 没有出现在连接页</h2><ol><li>在“系统设置 → 蓝牙”确认手柄已经完成配对。</li><li>让手柄靠近 Mac，并按一下实体按键唤醒。</li><li>在 JoyHarness 连接页选择“重新检测手柄”。</li></ol><p class="callout">如果 macOS 蓝牙列表也看不到手柄，先处理系统配对；JoyHarness 无法替代系统蓝牙连接。</p></section>
+          <section id="no-output"><p class="info-step-label">权限</p><h2>显示已连接，但按键没有输出</h2><p>这种情况通常说明读取手柄正常，但快捷键输出权限不完整。打开“权限”页，确认辅助功能已经授权。</p><p>如果菜单栏、电量和连接状态正常，只有实际输入无效，优先重新确认辅助功能授权。</p></section>
+          <section id="paused"><p class="info-step-label">状态</p><h2>页面显示“按键响应已暂停”</h2><p>暂停不会断开 Joy-Con，但所有语音与快捷键动作都会停止执行。在连接页或菜单栏状态菜单中选择“继续响应”即可恢复。</p></section>
+          <section id="service"><p class="info-step-label">服务</p><h2>后台服务尚未运行或状态读取失败</h2><p>在连接页使用“启动后台服务”或“重新启动后台服务”。状态恢复后，再确认按键响应卡显示“已就绪”。</p><p class="callout"><strong>不要先删除配置。</strong> 服务异常与按键方案是两件事；重置配置不会修复一个没有运行的后台服务。</p></section>
+          <section id="diagnostics"><p class="info-step-label">诊断</p><h2>问题仍未解决</h2><p>从菜单栏状态菜单选择“导出诊断信息”。诊断内容用于定位连接、服务和权限状态，不包含录音或语音文字。</p><div class="info-actions"><a class="button button-primary" href="../guide/">重新查看上手流程</a><a class="button button-quiet" href="https://github.com/yongboxia-hue/joyharness/releases/latest" rel="noopener">核对当前版本</a></div></section>
+        </article>
+      </div>
+    </main>
+    <footer class="site-footer compact-footer"><div class="footer-main"><div class="footer-identity"><a class="brand footer-brand" href="../"><img src="../assets/brand-icon.png" alt="" width="40" height="40" /><span>JoyHarness</span></a><p>把语音输入，握在手里。</p></div><nav aria-label="页脚导航"><a href="../">官网</a><a href="../guide/">上手指南</a><a href="../privacy/">隐私</a></nav></div><div class="footer-meta"><span>© 2026 JoyHarness</span><span>macOS 13+ · MIT Licensed</span></div></footer>
+    <script src="../app.js"></script>
+  </body>
+</html>

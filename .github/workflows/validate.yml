@@ -1,0 +1,36 @@
+name: Validate site
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch: {}
+
+jobs:
+  validate:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: npm ci --no-audit --no-fund
+
+      # 两个脚本都驱动真实浏览器。服务它们自己会起，浏览器得装。
+      - run: npx playwright install --with-deps chromium
+
+      # 脚本自带本地服务，这里不用再起一个
+      - name: Validate
+        run: npm run validate
+
+      - name: Release audit
+        run: npm run audit:release
+
+      - name: Keep the screenshots from this run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-screenshots
+          path: validation/

@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="JoyHarness 把任意一只 Nintendo Switch Joy-Con 变成 Mac 的语音工作流快捷键手柄，让你更少切换键盘和鼠标，更顺手地启动语音输入、整理表达并确认发送。"
+    />
+    <meta name="theme-color" content="#f7f7f4" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="JoyHarness" />
+    <meta property="og:title" content="JoyHarness｜把语音输入，握在手里" />
+    <meta
+      property="og:description"
+      content="用任意一只 Joy-Con 启动语音输入、连续听写、确认发送和常用快捷键。"
+    />
+    <meta property="og:url" content="https://joyharness.app/" />
+    <meta property="og:image" content="https://joyharness.app/assets/product/connection-dark.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="JoyHarness｜把语音输入，握在手里" />
+    <meta
+      name="twitter:description"
+      content="用任意一只 Joy-Con 启动语音输入、连续听写、确认发送和常用快捷键。"
+    />
+    <meta name="twitter:image" content="https://joyharness.app/assets/product/connection-dark.png" />
+    <link rel="canonical" href="https://joyharness.app/" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./assets/brand-icon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="./assets/brand-icon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>JoyHarness｜把语音输入，握在手里</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://joyharness.app/#website",
+            "url": "https://joyharness.app/",
+            "name": "JoyHarness",
+            "inLanguage": "zh-CN"
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://joyharness.app/#software",
+            "name": "JoyHarness",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "macOS 13 or later",
+            "url": "https://joyharness.app/",
+            "description": "JoyHarness 是一款 macOS Joy-Con 快捷键映射工具。它把任意一只 Nintendo Switch Joy-Con 变成语音工作流控制器，用实体按键启动语音输入、连续听写、确认发送、编辑和切换应用。",
+            "featureList": [
+              "单只左 Joy-Con 或右 Joy-Con 独立使用",
+              "实体按键映射：按一下与按住可分别触发不同快捷键",
+              "把语音输入法的启动、听写、发送快捷键放到手柄上",
+              "macOS 菜单栏连接状态与电量",
+              "本地按键处理，不录音、不读取语音内容"
+            ],
+            "softwareRequirements": "macOS 13 或更高版本（Intel 与 Apple Silicon 通用）；至少一只 Nintendo Switch Joy-Con；蓝牙连接和辅助功能权限",
+            "downloadUrl": "https://github.com/yongboxia-hue/joyharness/releases/latest",
+            "isAccessibleForFree": true,
+            "license": "https://opensource.org/licenses/MIT",
+            "codeRepository": "https://github.com/yongboxia-hue/joyharness",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "CNY"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://joyharness.app/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "要钱吗？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "不要。JoyHarness 可以免费使用。"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "一定要有一对 Joy-Con 吗？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "不需要。左手柄或右手柄都可以独立完成语音输入、发送、编辑和切换应用等核心操作。"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "JoyHarness 会录下我的声音吗？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "不会。JoyHarness 只读取手柄按键并发送快捷键，不录音，也不读取语音内容。语音识别由用户选择的输入工具完成。"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "JoyHarness 可以配合哪些语音输入工具？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "任何能用系统快捷键启动的语音输入工具都可以。JoyHarness 发出的是快捷键本身，接收方由你决定；默认映射按 Typeless 和豆包的习惯配置，可以改成任何工具的快捷键。"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "JoyHarness 支持 Windows 吗？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "暂不支持 Windows。"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="JoyHarness 首页">
+        <img src="./assets/brand-icon.png" alt="" width="40" height="40" />
+        <span>JoyHarness</span>
+      </a>
+
+      <button
+        class="nav-toggle icon-button"
+        type="button"
+        aria-label="打开导航"
+        aria-expanded="false"
+        aria-controls="site-nav"
+        data-nav-toggle
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="主导航" data-nav>
+        <a href="#workflow">产品</a>
+        <a href="#product">产品界面</a>
+        <a href="#scenes">适合谁</a>
+        <a href="./guide/">上手指南</a>
+        <a href="./support/">支持</a>
+      </nav>
+
+      <a class="header-cta" href="#download">获取 macOS 版</a>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Joy-Con 语音工作流快捷键工具</p>
+          <h1 id="hero-title">把语音输入，握在手里。</h1>
+          <p class="hero-lead">
+            用任意一只 Joy-Con 启动语音输入、整理表达、确认发送和切换应用。
+            少一次伸手找键盘，多留一点注意力给正在说的事。
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#workflow">
+              看它怎么工作
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+          <p class="hero-note">免费开源 · macOS 13+ · 一只 Joy-Con 即可 · 不录音</p>
+        </div>
+
+        <div class="hero-media" aria-label="JoyHarness 产品界面">
+          <img
+            class="hero-window"
+            src="./assets/product/connection-dark.png"
+            alt="JoyHarness 深色模式连接页，显示 Joy-Con 连接状态、电量与常用按键"
+            width="1180"
+            height="780"
+          />
+        </div>
+
+        <a class="hero-scroll" href="#promise" aria-label="继续了解 JoyHarness">
+          <span>为什么需要它</span>
+          <span aria-hidden="true">↓</span>
+        </a>
+      </section>
+
+      <section class="promise" id="promise" aria-label="产品核心承诺">
+        <p><strong>任意一只</strong><span>左右手柄都能独立完成整套操作</span></p>
+        <p><strong>一键两用</strong><span>按一下和按住可以做不同的事</span></p>
+        <p><strong>只发快捷键</strong><span>不录音，也不读取你的语音内容</span></p>
+      </section>
+
+      <section class="problem section-pad" aria-labelledby="problem-title">
+        <div class="section-shell problem-layout">
+          <div class="problem-copy">
+            <h2 id="problem-title">说到一半，不必再回头找键盘。</h2>
+          </div>
+          <div class="problem-detail">
+            <p class="definition-copy">
+              <strong>JoyHarness 是一款 macOS Joy-Con 快捷键映射工具。</strong>
+              它把任意一只 Nintendo Switch Joy-Con 变成语音工作流控制器。
+            </p>
+            <p>
+              Vibe Coding、写作或和 AI 对话时，语音负责把想法变成文字；但启动听写、确认发送、切换窗口，仍会把手从鼠标带回键盘。
+            </p>
+            <p>
+              JoyHarness 把这些高频动作放进一只闲置的 Joy-Con。你继续看着屏幕、握着鼠标，另一只手完成整段表达。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="workflow section-pad" id="workflow" aria-labelledby="workflow-title">
+        <div class="section-shell">
+          <div class="section-heading">
+            <p class="eyebrow">一只手柄，一条完整链路</p>
+            <h2 id="workflow-title">光标进框，说完，发出。</h2>
+            <p>左右手柄功能一致，按握持习惯选。每个键发什么，都能改。</p>
+          </div>
+          <div class="workflow-track" aria-label="语音工作流示例">
+            <article class="workflow-step">
+              <div class="workflow-key key-focus">X</div>
+              <div>
+                <p class="step-meta">按一下 · 聚焦输入框</p>
+                <h3>进框</h3>
+                <p>光标直接落进输入框。</p>
+              </div>
+            </article>
+            <span class="workflow-arrow" aria-hidden="true">→</span>
+            <article class="workflow-step">
+              <div class="workflow-key key-trigger">ZR</div>
+              <div>
+                <p class="step-meta">按一下开始 · 再按一下结束</p>
+                <h3>说</h3>
+                <p>发出 <code>fn</code>，交给你的语音输入法。</p>
+              </div>
+            </article>
+            <span class="workflow-arrow" aria-hidden="true">→</span>
+            <article class="workflow-step">
+              <div class="workflow-key key-send">A</div>
+              <div>
+                <p class="step-meta">按一下 · ↩</p>
+                <h3>发出</h3>
+                <p>按住则是换行。</p>
+              </div>
+            </article>
+          </div>
+          <p class="workflow-note">
+            右手不离鼠标。<code>fn</code> 要先在你的语音输入法里绑好。
+          </p>
+        </div>
+      </section>
+
+      <section class="product section-pad" id="product" aria-labelledby="product-title">
+        <div class="section-shell">
+          <div class="section-heading section-heading-row">
+            <div>
+
+              <h2 id="product-title">连接和按键，一眼就能看懂。</h2>
+            </div>
+            <p>连接状态和按键配置都集中在一个清晰的界面里。</p>
+          </div>
+
+          <div class="product-viewer">
+            <div class="product-tabs" role="tablist" aria-label="产品界面预览">
+              <button
+                type="button"
+                role="tab"
+                aria-selected="true"
+                aria-controls="product-panel"
+                id="tab-connection"
+                data-product-tab="connection"
+              >
+                <span>01</span>连接状态
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="product-panel"
+                id="tab-mapping"
+                data-product-tab="mapping"
+              >
+                <span>02</span>按键映射
+              </button>
+            </div>
+
+            <figure
+              class="product-panel"
+              id="product-panel"
+              role="tabpanel"
+              aria-labelledby="tab-connection"
+            >
+              <img
+                src="./assets/product/connection-dark.png"
+                alt="JoyHarness 连接页面，显示 Joy-Con 连接、电量和按键响应状态"
+                width="1180"
+                height="780"
+                data-product-image
+              />
+              <figcaption>
+                <strong data-product-title>先确认现在能不能用</strong>
+                <span data-product-copy>连接、电量、服务和按键响应集中在一个页面；遇到异常时直接给出下一步。</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="benefits section-pad" aria-labelledby="benefits-title">
+        <div class="section-shell">
+          <div class="section-heading">
+            <h2 id="benefits-title">它改变的是表达时的手部动线。</h2>
+          </div>
+
+          <div class="benefit-grid">
+            <article class="benefit-item benefit-item-large">
+              <span class="benefit-index">01</span>
+              <h3>一只手始终留在鼠标上</h3>
+              <p>在代码、文档和对话之间移动时，光标控制与语音操作可以同时进行。</p>
+              <img src="./assets/joycon-right.png" alt="红色右 Joy-Con" width="654" height="1268" loading="lazy" />
+            </article>
+            <article class="benefit-item">
+              <span class="benefit-index">02</span>
+              <h3>同一个按键，不止一个动作</h3>
+              <p>按一下和按住可以分别绑定不同命令，把有限的实体按键变成更完整的工作台。</p>
+            </article>
+            <article class="benefit-item benefit-item-dark">
+              <span class="benefit-index">03</span>
+              <h3>状态异常，不让你猜</h3>
+              <p>未完成授权或服务停止时，页面会说明影响并给出唯一的恢复动作。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="scenes section-pad" id="scenes" aria-labelledby="scenes-title">
+        <div class="section-shell scenes-layout">
+          <div class="section-heading scenes-heading">
+            <h2 id="scenes-title">只要你习惯开口表达，它就有用。</h2>
+            <p>JoyHarness 适合任何需要长时间在屏幕前说、改、发的场景。</p>
+          </div>
+
+          <div class="scene-list">
+            <article>
+              <span>01</span>
+              <div>
+                <h3>Vibe Coding</h3>
+                <p>看着代码、握着鼠标，随时说出修改意图，再确认发送给 AI 编程工具。</p>
+              </div>
+            </article>
+            <article>
+              <span>02</span>
+              <div>
+                <h3>写作与整理</h3>
+                <p>快速启动整理表达或连续听写，把注意力留在内容，不被快捷键打断。</p>
+              </div>
+            </article>
+            <article>
+              <span>03</span>
+              <div>
+                <h3>AI 对话与日常沟通</h3>
+                <p>在浏览器、聊天与办公应用之间切换，用同一套动作完成输入、编辑和发送。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="privacy section-pad" id="privacy" aria-labelledby="privacy-title">
+        <div class="section-shell privacy-layout">
+          <div class="privacy-mark" aria-hidden="true">
+            <img src="./assets/brand-icon.png" alt="" width="120" height="120" loading="lazy" />
+          </div>
+          <div>
+            <h2 id="privacy-title">语音交给你选择的工具，JoyHarness 只负责按键。</h2>
+            <p>
+              JoyHarness 接收 Joy-Con 的实体按键，再把对应快捷键发送到 Mac。它不录音、不读取语音内容，也不替代 Typeless、豆包或其他语音输入工具。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="setup section-pad" aria-labelledby="setup-title">
+        <div class="section-shell">
+          <div class="section-heading section-heading-row">
+            <div>
+              <h2 id="setup-title">第一次真实发送成功，才算配置完成。</h2>
+            </div>
+            <p>不是“显示已连接”就结束，而是现场跑通一次语音输入闭环。</p>
+          </div>
+
+          <ol class="setup-list">
+            <li>
+              <span>1</span>
+              <div>
+                <h3>允许辅助功能</h3>
+                <p>用于把 Joy-Con 操作发送为你配置的快捷键。</p>
+              </div>
+            </li>
+            <li>
+              <span>2</span>
+              <div>
+                <h3>连接任意一只 Joy-Con</h3>
+                <p>单左、单右或一对都可以。连接后先确认电量和按键响应状态。</p>
+              </div>
+            </li>
+            <li>
+              <span>3</span>
+              <div>
+                <h3>跑通一次语音工作流</h3>
+                <p>X 进框，ZR 说（再按一下结束），A 发出。</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+
+      <section class="requirements section-pad" id="requirements" aria-labelledby="requirements-title">
+        <div class="section-shell requirements-layout">
+          <div>
+            <h2 id="requirements-title">你需要这些。</h2>
+          </div>
+          <ul>
+            <li><strong>一台 Mac</strong><span>运行 macOS 13 或更高版本，Intel 和 Apple Silicon 通用</span></li>
+            <li><strong>至少一只 Joy-Con</strong><span>左手柄、右手柄或一对均可</span></li>
+            <li><strong>语音输入工具</strong><span>任意一个能用快捷键启动的都行（如 Typeless、豆包）。<strong>要先在它里面把启动快捷键设成 <code>fn</code></strong> —— JoyHarness 只负责把 <code>fn</code> 发出去</span></li>
+            <li><strong>辅助功能权限</strong><span>用于向当前应用发送快捷键</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="faq section-pad" id="faq" aria-labelledby="faq-title">
+        <div class="section-shell faq-layout">
+          <div class="faq-heading">
+            <h2 id="faq-title">先把关键顾虑说清楚。</h2>
+          </div>
+          <div class="faq-list">
+            <details>
+              <summary>要钱吗？</summary>
+              <p>不要。JoyHarness 可以免费使用。</p>
+            </details>
+            <details>
+              <summary>一定要有一对 Joy-Con 吗？</summary>
+              <p>不需要。左手柄或右手柄都可以独立完成语音输入、发送、编辑和切换应用等核心操作。</p>
+            </details>
+            <details>
+              <summary>JoyHarness 会录下我的声音吗？</summary>
+              <p>不会。JoyHarness 只读取手柄按键并发送快捷键，不录音，也不读取语音内容。语音识别由你选择的输入工具完成。</p>
+            </details>
+            <details>
+              <summary>可以配合哪些语音输入工具？</summary>
+                  <p>任何能用系统快捷键启动的都行。JoyHarness 发出的是快捷键本身，接收方是谁由你决定 —— 我们自己用 Typeless 和豆包，默认映射也按它们的习惯配好了，你可以改成任何工具的快捷键。</p>
+            </details>
+            <details>
+              <summary>为什么需要辅助功能权限？</summary>
+              <p>辅助功能用于把你配置的快捷键发送给当前应用。JoyHarness 通过手柄接口读取 Joy-Con，不监听键盘输入。</p>
+            </details>
+            <details>
+              <summary>支持 Windows 吗？</summary>
+              <p>暂不支持 Windows。</p>
+            </details>
+          </div>
+        </div>
+      </section>
+      <section class="download section-pad" id="download" aria-labelledby="download-title">
+        <div class="section-shell download-layout">
+          <div>
+            <p class="eyebrow">JoyHarness for macOS</p>
+            <h2 id="download-title">让闲置 Joy-Con，成为你的表达控制器。</h2>
+            <p class="download-lead">
+              macOS 13+，一只 Joy-Con 就能开始。一只 Joy-Con 就能开始。
+            </p>
+            <div class="download-actions">
+              <button class="button button-primary button-light" type="button" data-download-button>
+                获取 macOS 版
+              </button>
+            </div>
+            <p class="download-note">
+
+            </p>
+          </div>
+          <div class="download-product">
+            <img src="./assets/brand-icon.png" alt="JoyHarness 应用图标" width="160" height="160" loading="lazy" />
+            <dl>
+              <div><dt>系统</dt><dd>macOS 13 或更高版本</dd></div>
+              <div><dt>手柄</dt><dd>Nintendo Switch Joy-Con</dd></div>
+              <div><dt>连接</dt><dd>蓝牙</dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-main"><div class="footer-identity"><a class="brand footer-brand" href="#top" aria-label="返回首页">
+          <img src="./assets/brand-icon.png" alt="" width="40" height="40" loading="lazy" />
+          <span>JoyHarness</span>
+        </a><p>把语音输入，握在手里。</p></div><nav aria-label="页脚导航">
+          <a href="#workflow">产品</a>
+          <a href="#product">产品界面</a>
+          <a href="./guide/">上手指南</a>
+          <a href="./support/">支持</a>
+          <a href="./privacy/">隐私</a>
+
+
+        </nav>
+      </div>
+      <div class="footer-meta">
+        <span>© 2026 JoyHarness</span>
+        <span>macOS 13+ · MIT Licensed</span>
+      </div>
+    </footer>
+
+    <dialog class="release-dialog" data-release-dialog aria-labelledby="release-dialog-title">
+      <form method="dialog">
+        <button class="dialog-close icon-button" value="close" aria-label="关闭下载状态">×</button>
+        <img src="./assets/brand-icon.png" alt="" width="72" height="72" loading="lazy" />
+        <p class="eyebrow">下载</p>
+        <h2 id="release-dialog-title">获取 JoyHarness</h2>
+        <p>
+          前往下载页获取最新 macOS 安装包。
+        </p>
+        <a class="button button-primary" href="https://github.com/yongboxia-hue/joyharness/releases/latest" rel="noopener" data-dialog-product-link>前往下载页</a>
+      </form>
+    </dialog>
+
+    <script src="./site-config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

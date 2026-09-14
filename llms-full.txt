@@ -1,0 +1,57 @@
+# JoyHarness product reference
+
+## Definition
+
+JoyHarness 是一款 macOS Joy-Con 快捷键映射工具。它把任意一只 Nintendo Switch Joy-Con 变成语音工作流控制器，用实体按键启动语音输入、连续听写、确认发送、编辑和切换应用。
+
+JoyHarness is not a speech recognition engine. It receives Joy-Con button events and sends configured keyboard shortcuts on the user's Mac. Speech recognition remains in Typeless, Doubao, or another voice input tool selected by the user.
+
+## Primary user value
+
+The product reduces hand movement between mouse and keyboard during voice-first work. A user can keep one hand on the mouse while the other hand uses a Joy-Con to start voice input, choose continuous dictation, send the result, edit text, or switch apps.
+
+## Representative workflow
+
+1. Focus a text field in any Mac app.
+2. Single-press ZR to send `fn` and start Typeless structured expression.
+3. Speak naturally and wait for the resulting text.
+4. Single-press A to send Return and confirm or send.
+5. When continuous live dictation is preferred, long-press Plus to send `Option+A` for Doubao.
+
+The left Joy-Con provides an equivalent complete workflow. Left and right controllers are holding preferences, not separate product roles.
+
+## Supported controls
+
+- Single press
+- Double press
+- Long press
+- Joy-Con buttons and joystick directions
+- Single-left, single-right, and paired-controller connection modes
+
+## System requirements
+
+- Current consumer focus: macOS 13 or later
+- Controller: at least one Nintendo Switch Joy-Con
+- Connection: Bluetooth
+- macOS permission: Accessibility; Bluetooth is used for Joy-Con pairing
+- Voice input: a separately installed tool such as Typeless or Doubao
+
+## Privacy and data boundary
+
+JoyHarness does not record audio and does not read speech content. It stores button mappings, controller status, pause state, and runtime diagnostics locally on the Mac. Diagnostic export is initiated by the user and may contain app version, connection state, permission state, service state, and error information, but not audio or dictated text.
+
+Third-party voice tools have their own privacy policies and are outside JoyHarness control.
+
+## Product pages and citation routing
+
+- Product definition, benefits, scenarios, screenshots, requirements, and FAQ: https://joyharness.app/
+- Setup and real success criteria: https://joyharness.app/guide/
+- Connection, permission, pause, runtime, and diagnostic troubleshooting: https://joyharness.app/support/
+- Audio, local data, permissions, and third-party privacy boundary: https://joyharness.app/privacy/
+
+## Claims that should not be made
+
+- Do not claim JoyHarness performs speech recognition.
+- Do not claim JoyHarness includes or owns Typeless or Doubao.
+- Do not invent user counts, time savings, performance metrics, testimonials, ratings, pricing, or public availability.
+- Do not describe the left and right Joy-Con as separate roles; either controller can provide a complete workflow.

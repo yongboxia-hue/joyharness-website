@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="JoyHarness macOS 上手指南：完成系统权限、连接 Joy-Con，并跑通从语音输入到确认发送的第一次真实使用。" />
+    <meta name="theme-color" content="#f7f7f4" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="JoyHarness 上手指南｜连接 Joy-Con 并完成第一次语音发送" />
+    <meta property="og:description" content="按真实工作流完成权限、蓝牙连接、语音输入与确认发送。" />
+    <meta property="og:url" content="https://joyharness.app/guide/" />
+    <meta property="og:image" content="https://joyharness.app/assets/product/connection-dark.png" />
+    <link rel="canonical" href="https://joyharness.app/guide/" />
+    <link rel="icon" href="../assets/brand-icon.png" type="image/png" />
+    <link rel="stylesheet" href="../styles.css" />
+    <title>JoyHarness 上手指南｜连接 Joy-Con 并完成第一次语音发送</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "在 Mac 上配置 JoyHarness",
+        "description": "完成 macOS 权限、连接任意一只 Joy-Con，并跑通从语音输入到确认发送的完整流程。",
+        "totalTime": "PT5M",
+        "tool": [
+          { "@type": "HowToTool", "name": "macOS 13 或更高版本的 Mac" },
+          { "@type": "HowToTool", "name": "至少一只 Nintendo Switch Joy-Con" },
+          { "@type": "HowToTool", "name": "任意一个可用系统快捷键启动的语音输入工具" }
+        ],
+        "step": [
+          { "@type": "HowToStep", "position": 1, "name": "允许辅助功能权限", "text": "在 JoyHarness 权限页允许辅助功能。" },
+          { "@type": "HowToStep", "position": 2, "name": "连接任意一只 Joy-Con", "text": "在 macOS 蓝牙设置中配对左 Joy-Con、右 Joy-Con 或一对手柄。" },
+          { "@type": "HowToStep", "position": 3, "name": "完成第一次语音发送", "text": "聚焦输入框，按 ZR 发出 fn 启动语音输入，说出内容，再按 A 确认发送。" }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="site-header is-scrolled" data-header>
+      <a class="brand" href="../" aria-label="JoyHarness 首页"><img src="../assets/brand-icon.png" alt="" width="40" height="40" /><span>JoyHarness</span></a>
+      <button class="nav-toggle icon-button" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
+      <nav class="site-nav" id="site-nav" aria-label="主导航" data-nav>
+        <a href="../#workflow">产品</a><a href="../#product">产品界面</a><a href="./" aria-current="page">上手指南</a><a href="../support/">支持</a>
+      </nav>
+      <a class="header-cta" href="../#download">获取 macOS 版</a>
+    </header>
+
+    <main id="main" class="info-main">
+      <header class="info-hero section-shell">
+        <p class="eyebrow">上手指南 · 约 5 分钟</p>
+        <h1>第一次真实发送成功，才算准备好。</h1>
+        <p>按下面的顺序完成权限、连接和真实输入测试。不要只停在“手柄已连接”，整条语音工作流通过才算完成配置。</p>
+      </header>
+
+      <div class="info-body section-shell">
+        <aside class="info-toc" aria-label="本页目录">
+          <strong>本页内容</strong>
+          <a href="#prepare">开始前准备</a>
+          <a href="#permissions">1. 完成权限</a>
+          <a href="#connect">2. 连接手柄</a>
+          <a href="#test">3. 测试工作流</a>
+          <a href="#mapping">默认按键</a>
+          <a href="#done">完成标准</a>
+        </aside>
+
+        <article class="info-content">
+          <section id="prepare">
+            <h2>开始前准备</h2>
+            <ul class="check-list">
+              <li>运行 macOS 13 或更高版本的 Mac</li>
+               <li>已下载并装好 JoyHarness。安装包已通过 Apple 公证，双击就能打开</li>
+              <li>至少一只已经充电的 Nintendo Switch Joy-Con</li>
+              <li>一个能用系统快捷键启动的语音输入工具（Typeless、豆包等都行）</li>
+               <li><strong>在那个工具里先把启动快捷键设成 <kbd>fn</kbd></strong> —— JoyHarness 只负责把 <kbd>fn</kbd> 发出去，谁来接是它自己的设置</li>
+            </ul>
+          </section>
+
+          <section id="permissions">
+            <p class="info-step-label">步骤 1</p>
+            <h2>允许辅助功能</h2>
+            <p>辅助功能用于把 Joy-Con 操作发送为你配置的快捷键。JoyHarness 不申请输入监控权限。</p>
+            <div class="fact-table" role="table" aria-label="系统权限用途">
+              <div role="row"><strong role="cell">辅助功能</strong><span role="cell">执行你配置的系统快捷键</span></div>
+            </div>
+          </section>
+
+          <section id="connect">
+            <p class="info-step-label">步骤 2</p>
+            <h2>连接任意一只 Joy-Con</h2>
+            <ol>
+              <li>打开“系统设置 → 蓝牙”。</li>
+              <li>让 Joy-Con 进入配对状态，并在设备列表中完成连接。</li>
+              <li>回到 JoyHarness，确认连接页显示手柄名称和电量，并且「按键响应」一栏是绿色的「正在响应」。</li>
+            </ol>
+            <p class="callout"><strong>一只就够。</strong> 左手柄或右手柄都能独立完成整套语音工作流；连接一对只是增加可用按键，并非前提。</p>
+            <figure class="info-figure"><img src="../assets/product/connection-dark.png" alt="JoyHarness 连接页面显示左右 Joy-Con 已连接" width="1180" height="780" /><figcaption>连接页同时显示电量、后台服务和按键响应状态。</figcaption></figure>
+          </section>
+
+          <section id="test">
+            <p class="info-step-label">步骤 3</p>
+            <h2>亲自跑通一次语音输入</h2>
+            <ol>
+              <li>打开任意文本输入框，让光标保持聚焦。</li>
+              <li>按一下右手柄 <kbd>ZR</kbd>，它会发出 <kbd>fn</kbd>，启动你的语音输入工具。</li>
+              <li>说一句完整的话，确认整理后的文字出现在输入框中。</li>
+              <li>按一下 <kbd>A</kbd>，确认发送或换行行为符合当前应用预期。</li>
+            </ol>
+            <p>需要边说边出文字时，长按 <kbd>+</kbd> 触发 <kbd>⌥ A</kbd>，进入豆包连续听写。</p>
+          </section>
+
+          <section id="mapping">
+            <h2>默认右手柄语音按键</h2>
+            <div class="fact-table" role="table" aria-label="默认语音按键">
+              <div role="row"><strong role="cell"><kbd>ZR</kbd> 单击</strong><span role="cell"><kbd>fn</kbd> · 启动语音输入</span></div>
+              <div role="row"><strong role="cell"><kbd>+</kbd> 长按</strong><span role="cell"><kbd>⌥ A</kbd> · 豆包连续听写</span></div>
+              <div role="row"><strong role="cell"><kbd>A</kbd> 单击</strong><span role="cell"><kbd>↩</kbd> · 确认发送</span></div>
+            </div>
+            <figure class="info-figure"><img src="../assets/product/mapping-dark.png" alt="JoyHarness 右 Joy-Con 按键映射页面" width="1180" height="780" /><figcaption>按键页一次显示一只手柄。每个按键可以只做一件事，也可以按一下和按住分别做不同的事。</figcaption></figure>
+          </section>
+
+          <section id="done" class="info-complete">
+            <h2>看到这三个结果，配置才算完成</h2>
+            <ul class="check-list">
+              <li>连接页显示 Joy-Con 已连接，「按键响应」是「正在响应」</li>
+              <li>按 <kbd>ZR</kbd> 后，语音工具能在真实输入框中生成文字</li>
+              <li>按 <kbd>A</kbd> 后，当前应用正确执行确认发送或换行</li>
+            </ul>
+            <div class="info-actions"><a class="button button-primary" href="../#download">获取 macOS 版</a><a class="button button-quiet" href="../support/">遇到问题？查看支持</a></div>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <footer class="site-footer compact-footer"><div class="footer-main"><div class="footer-identity"><a class="brand footer-brand" href="../"><img src="../assets/brand-icon.png" alt="" width="40" height="40" /><span>JoyHarness</span></a><p>把语音输入，握在手里。</p></div><nav aria-label="页脚导航"><a href="../">官网</a><a href="../support/">支持</a><a href="../privacy/">隐私</a></nav></div><div class="footer-meta"><span>© 2026 JoyHarness</span><span>macOS 13+ · MIT Licensed</span></div></footer>
+    <script src="../app.js"></script>
+  </body>
+</html>

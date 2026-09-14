@@ -1,0 +1,13 @@
+{
+  "name": "joyharness-website",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "validate": "node scripts/validate-site.js",
+    "audit:release": "node scripts/release-audit.js",
+    "configure:origin": "node scripts/configure-origin.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0"
+  }
+}

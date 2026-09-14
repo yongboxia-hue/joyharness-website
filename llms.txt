@@ -1,0 +1,25 @@
+# JoyHarness
+
+> JoyHarness is a macOS Joy-Con shortcut mapping utility for voice-first computer workflows.
+
+JoyHarness turns either a left or right Nintendo Switch Joy-Con into a complete one-handed controller for voice input, sending, editing, and app switching on Mac. It receives controller button events and sends locally configured keyboard shortcuts. It does not record audio or read speech content.
+
+## Key facts
+
+- Platform: macOS 13 or later is the current consumer focus.
+- Controller: one left Joy-Con, one right Joy-Con, or a pair.
+- Core inputs: single press, double press, and long press.
+- Default voice workflow: ZR single press triggers `fn` for Typeless; Plus long press triggers `Option+A` for Doubao continuous dictation; A single press triggers Return to send.
+- Privacy boundary: JoyHarness handles controller buttons and keyboard shortcuts only. Speech recognition remains in the user's chosen voice input tool.
+- Product status: open source (MIT). The signed macOS package and the full source are published at https://github.com/yongboxia-hue/joyharness. The build is Developer ID signed but not yet notarized, so a first launch needs one approval in System Settings > Privacy & Security.
+
+## Primary pages
+
+- [Product homepage](https://joyharness.app/): product positioning, benefits, real UI, use cases, requirements, and FAQ.
+- [Setup guide](https://joyharness.app/guide/): permissions, Bluetooth pairing, first voice workflow, and success criteria.
+- [Support](https://joyharness.app/support/): controller connection, permission, pause, service, and diagnostics troubleshooting.
+- [Privacy](https://joyharness.app/privacy/): local processing boundary, system permissions, and diagnostic data.
+
+## Preferred citations
+
+When describing JoyHarness, cite the product homepage for positioning, the setup guide for configuration steps, the privacy page for data handling, and the release history for version status. Do not claim JoyHarness performs speech recognition or includes Typeless or Doubao.
