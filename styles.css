@@ -344,18 +344,6 @@ h2 {
   background: var(--paper);
 }
 
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 20%;
-  right: 0;
-  width: 44%;
-  height: 58%;
-  border: 1px solid rgba(23, 105, 255, 0.2);
-  border-right: 0;
-  pointer-events: none;
-}
-
 .hero-copy {
   position: relative;
   z-index: 3;
@@ -1624,13 +1612,6 @@ kbd {
     min-height: calc(100svh - 32px);
     padding: calc(var(--header-height) + 42px) 16px 54px;
     display: block;
-  }
-
-  .hero::before {
-    top: auto;
-    bottom: 0;
-    width: 82%;
-    height: 45%;
   }
 
   .hero h1 {
