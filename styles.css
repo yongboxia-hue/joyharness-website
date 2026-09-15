@@ -369,7 +369,20 @@ h2 {
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 12px;
+}
+
+/* 下载是首屏唯一的主行动，「看它怎么工作」退成一条安静的文字链接，
+   在场的同时不跟下载按钮抢视线。取色和字重沿用 .hero-scroll。 */
+.hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: var(--text-meta);
+  font-weight: 650;
 }
 
 .hero-note {

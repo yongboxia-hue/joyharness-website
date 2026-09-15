@@ -95,16 +95,24 @@ document.querySelectorAll("[data-product-tab]").forEach((tab) => {
 
 const siteConfig = window.JOYHARNESS_SITE_CONFIG || {};
 
-downloadButton?.addEventListener("click", () => {
-  if (siteConfig.downloadUrl) {
-    window.location.assign(siteConfig.downloadUrl);
-    return;
-  }
-  releaseDialog?.showModal();
-});
+// 页面上每个下载入口在 HTML 里都先指向 GitHub 的 releases/latest —— 那个地址
+// 永不过期，没有 JS 时照样能下载，爬虫看到的也是它。配置里给了站内直链就换
+// 成站内的：同源、国内更快，而且版本号只写在 site-config.js 一处，换版本不用
+// 动 HTML。
+const downloadLinks = document.querySelectorAll("[data-download-link]");
 
-if (siteConfig.downloadUrl && downloadButton) {
-  downloadButton.textContent = siteConfig.downloadLabel || "下载 macOS 版";
+if (siteConfig.downloadUrl) {
+  downloadLinks.forEach((link) => {
+    link.href = siteConfig.downloadUrl;
+    // 让浏览器直接存盘，而不是跳走一个页面。
+    link.setAttribute("download", "");
+  });
+} else if (downloadButton) {
+  // 没配置直链时，底部那个入口维持原来的行为：弹出发布状态对话框。
+  downloadButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    releaseDialog?.showModal();
+  });
 }
 
 releaseDialog?.addEventListener("click", (event) => {
