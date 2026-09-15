@@ -14,6 +14,10 @@ const configPath = path.resolve(__dirname, "../site-config.js");
 // 安装包和更新源都发布在这里，由 joyharness 仓库的 release.yml 写入并逐字节
 // 校验。官网只是读它，所以这里写死的是「该指向哪」，不是「现在指向哪」。
 const DOWNLOAD_ORIGIN = "https://joyharness-1305183734.cos.ap-shanghai.myqcloud.com/";
+// 不带版本号：发版时覆盖同一个对象，官网这一行永远不用改。于是「官网指的是不
+// 是最新版」这个问题没法再靠文件名回答 —— 只能把字节拉下来跟 Release 比，而
+// 那本来就是更该问的问题。
+const DOWNLOAD_NAME = "JoyHarness.dmg";
 // 版本历史页 2026-09-14 下线（发布记录统一放在 GitHub Releases）。
 // validate-site.js 当时同步了，这里漏了 —— 于是审计一直要求一个不存在的页面。
 const routes = ["/", "/guide/", "/support/", "/privacy/"];
@@ -137,8 +141,8 @@ function assert(condition, message) {
   // 会坏的事：桶还在、还是公有读、发的还是那个签过名公证过的文件。
   const configSource = fs.readFileSync(configPath, "utf8");
   const configuredDownload = configSource.match(/downloadUrl:\s*"([^"]*)"/)?.[1] || "";
-  assert(configuredDownload.startsWith(DOWNLOAD_ORIGIN),
-    `download: downloadUrl 不在发布用的对象存储上（${configuredDownload || "未配置"}）`);
+  assert(configuredDownload === DOWNLOAD_ORIGIN + DOWNLOAD_NAME,
+    `download: downloadUrl 不是发布用的固定地址（${configuredDownload || "未配置"}）`);
 
   github = await request.newContext(proxyServer ? { proxy: { server: proxyServer } } : {});
   const latestResponse = await github.get("https://api.github.com/repos/yongboxia-hue/joyharness/releases/latest",
@@ -146,12 +150,9 @@ function assert(condition, message) {
   assert(latestResponse.ok(), `download: 读不到最新 Release（HTTP ${latestResponse.status()}），无法判断官网指的这份是否过期`);
   const latest = await latestResponse.json();
 
-  const expectedName = configuredDownload.split("/").pop();
-  assert(expectedName === `JoyHarness-macos-${latest.tag_name}.dmg`,
-    `download: 官网指向 ${expectedName}，最新的 Release 是 ${latest.tag_name}`);
-
-  const digestAsset = latest.assets.find((asset) => asset.name === `${expectedName}.sha256`);
-  assert(digestAsset, `download: Release ${latest.tag_name} 里没有 ${expectedName}.sha256，没法核对`);
+  const releaseName = `JoyHarness-macos-${latest.tag_name}.dmg`;
+  const digestAsset = latest.assets.find((asset) => asset.name === `${releaseName}.sha256`);
+  assert(digestAsset, `download: Release ${latest.tag_name} 里没有 ${releaseName}.sha256，没法核对`);
   const publishedDigest = (await (await github.get(digestAsset.browser_download_url)).text()).trim().split(/\s+/)[0];
 
   // 走 page.request 而不是上面那个 github 上下文：桶在国内，直连就是访客走的
@@ -159,15 +160,20 @@ function assert(condition, message) {
   const hosted = await page.request.get(configuredDownload, { timeout: 180000 });
   assert(hosted.ok(), `download: ${configuredDownload} 取不到（HTTP ${hosted.status()}）`);
   const hostedDigest = crypto.createHash("sha256").update(await hosted.body()).digest("hex");
+  // 地址固定之后，这条就是「官网发的是不是当前版本」的唯一答案 —— 覆盖失败、
+  // 覆盖了旧包、或者发版时忘了写别名，都在这里红。
   assert(hostedDigest === publishedDigest,
-    `download: 桶里这份和 Release ${latest.tag_name} 发出去的不是同一个文件`
+    `download: ${DOWNLOAD_NAME} 不是 Release ${latest.tag_name} 发出去的那个文件`
     + `（桶里 ${hostedDigest.slice(0, 12)}…，Release ${publishedDigest.slice(0, 12)}…）`);
 
   // 点击存盘而不是在浏览器里打开一个二进制流，现在完全靠服务端这个头 ——
-  // 页面上的 download 属性跨域会被忽略，指望不上。
+  // 页面上的 download 属性跨域会被忽略，指望不上。文件名也由它决定：别名对象
+  // 必须报自己的名字，否则用户存下来的是带版本号的那个构建名。
   const disposition = hosted.headers()["content-disposition"] || "";
   assert(disposition.includes("attachment"),
     `download: 桶没有返回 attachment 的 Content-Disposition（${disposition || "无"}）`);
+  assert(disposition.includes(DOWNLOAD_NAME),
+    `download: Content-Disposition 里的文件名不是 ${DOWNLOAD_NAME}（${disposition}）`);
 
   const css = fs.readFileSync(cssPath, "utf8");
   assert(!/font-size\s*:[^;]*vw/.test(css), "styles: viewport-scaled font size found");
@@ -180,7 +186,7 @@ function assert(condition, message) {
     seo: { uniqueTitles: titles.size, uniqueDescriptions: descriptions.size, canonicalsInSitemap: canonicals.size },
     sgo: { robots: true, llms: true, llmsFull: true, structuredData: true },
     deployment: { securityHeaders: true, originConfigurator: true },
-    download: { file: expectedName, matchesRelease: latest.tag_name, hostedDigestMatches: true },
+    download: { file: DOWNLOAD_NAME, servesRelease: latest.tag_name, hostedDigestMatches: true },
     css: { fixedTypography: true, noGradients: true, noNegativeLetterSpacing: true },
     pass: true,
   };
