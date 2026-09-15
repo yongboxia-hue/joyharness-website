@@ -127,6 +127,10 @@ async function assertTextStaysInItsBox(page, label) {
     // 对未登录的 CI runner 就是 404 —— 那是仓库可见性的问题，不是页面写错了。
     // 站内 404（图片、样式表少了）仍然会被抓到，那才是这条断言的本意。
     page.on("requestfailed", (request) => {
+      // 浏览器把「下载」实现为一次被中止的导航请求，所以安装包直链一定会触发
+      // requestfailed —— 那是下载成功的正常表现，不是故障。下载是否真的拿到了
+      // 完整字节，由下面点击按钮那段单独断言。
+      if (request.url().includes("/downloads/")) return;
       if (request.url().startsWith(siteUrl)) errors.push(`${viewport.label}: ${request.url()} 请求失败`);
     });
     page.on("response", (response) => {
@@ -211,17 +215,31 @@ async function assertTextStaysInItsBox(page, label) {
     // dialog. Asserting only the dialog meant this check failed the moment the
     // button started doing its real job.
     const downloadTarget = await page.evaluate(() => (window.JOYHARNESS_SITE_CONFIG || {}).downloadUrl || "");
-    if (downloadTarget) {
+    if (downloadTarget.startsWith("/")) {
+      // 安装包现在由本站托管，按钮指向站内直链。浏览器对 .dmg 的处理是「下载」
+      // 而不是「导航」，页面地址根本不会变 —— 所以不能再断言跳到了哪里，要断言
+      // 的是下载确实开始了，而且下载的就是配置里指定的那个文件。
+      const [download] = await Promise.all([
+        page.waitForEvent("download", { timeout: 20000 }),
+        page.locator("[data-download-button]").click(),
+      ]);
+      const expectedFile = downloadTarget.split("/").pop();
+      assert(download.suggestedFilename() === expectedFile,
+        `${viewport.label}: download button produced ${download.suggestedFilename()}, expected ${expectedFile}`);
+      const savedPath = await download.path();
+      assert(savedPath, `${viewport.label}: download never completed`);
+      const servedBytes = fs.statSync(savedPath).size;
+      const repoBytes = fs.statSync(path.resolve(__dirname, "..", downloadTarget.replace(/^\//, ""))).size;
+      assert(servedBytes === repoBytes,
+        `${viewport.label}: downloaded ${servedBytes} bytes, repo file is ${repoBytes}`);
+    } else if (downloadTarget) {
       const [download] = await Promise.all([
         page.waitForURL((url) => url.href.startsWith(downloadTarget), { timeout: 15000 }).catch(() => null),
         page.locator("[data-download-button]").click(),
       ]);
       void download;
-      // /releases/latest 是一个跳转：GitHub 会把它换成具体的 tag
-      // （.../releases/tag/v0.1.6）。所以不能要求最终地址还以 /latest 开头 ——
-      // 这条断言此前之所以通过，只是因为仓库还是私有的，GitHub 对未登录访问
-      // 直接 404 而不跳转，地址就停在原处。仓库一公开，按钮开始真正工作，
-      // 断言反而失败了。要确认的是"到了这个仓库的 releases 区"。
+      // 外链分支（例如改回指向 GitHub Release 页时）：/releases/latest 是一个
+      // 跳转，GitHub 会把它换成具体的 tag，所以只要求落在该仓库的 releases 区。
       const reachedReleases = page.url().startsWith(downloadTarget)
         || /^https:\/\/github\.com\/yongboxia-hue\/joyharness\/releases\//.test(page.url());
       assert(reachedReleases, `${viewport.label}: download button reached ${page.url()}, expected the releases page`);
