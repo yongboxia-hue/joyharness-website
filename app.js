@@ -96,16 +96,18 @@ document.querySelectorAll("[data-product-tab]").forEach((tab) => {
 const siteConfig = window.JOYHARNESS_SITE_CONFIG || {};
 
 // 页面上每个下载入口在 HTML 里都先指向 GitHub 的 releases/latest —— 那个地址
-// 永不过期，没有 JS 时照样能下载，爬虫看到的也是它。配置里给了站内直链就换
-// 成站内的：同源、国内更快，而且版本号只写在 site-config.js 一处，换版本不用
-// 动 HTML。
+// 永不过期，没有 JS 时照样能下载，爬虫看到的也是它。配置里给了直链就换成直
+// 链：国内快得多，而且版本号只写在 site-config.js 一处，换版本不用动 HTML。
+//
+// 这里不设 download 属性。它只对同源链接有效，跨域会被浏览器直接忽略 ——
+// 之前设着它，还在注释里写「同源、更快」，两句话都是错的。点击存盘而不是
+// 跳走一个页面，靠的是服务端的 Content-Disposition，publish-to-cos.py 上传
+// 时显式设了 attachment。
 const downloadLinks = document.querySelectorAll("[data-download-link]");
 
 if (siteConfig.downloadUrl) {
   downloadLinks.forEach((link) => {
     link.href = siteConfig.downloadUrl;
-    // 让浏览器直接存盘，而不是跳走一个页面。
-    link.setAttribute("download", "");
   });
 } else if (downloadButton) {
   // 没配置直链时，底部那个入口维持原来的行为：弹出发布状态对话框。

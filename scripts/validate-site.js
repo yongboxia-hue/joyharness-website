@@ -130,7 +130,7 @@ async function assertTextStaysInItsBox(page, label) {
       // 浏览器把「下载」实现为一次被中止的导航请求，所以安装包直链一定会触发
       // requestfailed —— 那是下载成功的正常表现，不是故障。下载是否真的拿到了
       // 完整字节，由下面点击按钮那段单独断言。
-      if (request.url().includes("/downloads/")) return;
+      if (request.url().endsWith(".dmg")) return;
       if (request.url().startsWith(siteUrl)) errors.push(`${viewport.label}: ${request.url()} 请求失败`);
     });
     page.on("response", (response) => {
@@ -215,23 +215,30 @@ async function assertTextStaysInItsBox(page, label) {
     // dialog. Asserting only the dialog meant this check failed the moment the
     // button started doing its real job.
     const downloadTarget = await page.evaluate(() => (window.JOYHARNESS_SITE_CONFIG || {}).downloadUrl || "");
-    if (downloadTarget.startsWith("/")) {
-      // 安装包现在由本站托管，按钮指向站内直链。浏览器对 .dmg 的处理是「下载」
-      // 而不是「导航」，页面地址根本不会变 —— 所以不能再断言跳到了哪里，要断言
-      // 的是下载确实开始了，而且下载的就是配置里指定的那个文件。
+    if (downloadTarget.endsWith(".dmg")) {
+      // 直链分支。不管同源还是跨域，浏览器对 .dmg 的处理都是「下载」而不是
+      // 「导航」，页面地址根本不会变 —— 所以不能断言跳到了哪里，要断言的是
+      // 下载确实开始了，而且拿到的就是配置里那个文件。
+      //
+      // 从前这里还比「下载到的字节 == 仓库里那份的字节」。包已经不在仓库里
+      // 了，而且那个比法本来也证明不了什么：两份都旧的时候它照样是绿的。包
+      // 对不对由 release-audit 拿 Release 的 sha256 去核，这里只管按钮把人送
+      // 到了配置指定的那个文件。
+      //
+      // suggestedFilename 来自服务端的 Content-Disposition，所以这条断言顺带
+      // 也证明了那个头还在 —— 少了它，点下载会变成在浏览器里打开二进制流。
       const [download] = await Promise.all([
-        page.waitForEvent("download", { timeout: 20000 }),
+        page.waitForEvent("download", { timeout: 60000 }),
         page.locator("[data-download-button]").click(),
       ]);
       const expectedFile = downloadTarget.split("/").pop();
+      assert(download.url() === downloadTarget,
+        `${viewport.label}: download button fetched ${download.url()}, expected ${downloadTarget}`);
       assert(download.suggestedFilename() === expectedFile,
         `${viewport.label}: download button produced ${download.suggestedFilename()}, expected ${expectedFile}`);
-      const savedPath = await download.path();
-      assert(savedPath, `${viewport.label}: download never completed`);
-      const servedBytes = fs.statSync(savedPath).size;
-      const repoBytes = fs.statSync(path.resolve(__dirname, "..", downloadTarget.replace(/^\//, ""))).size;
-      assert(servedBytes === repoBytes,
-        `${viewport.label}: downloaded ${servedBytes} bytes, repo file is ${repoBytes}`);
+      // 取消而不是下完：四个视口各拉一遍就是八十多兆，而这里要证明的事在头
+      // 收到的那一刻就已经证明完了。
+      await download.cancel();
     } else if (downloadTarget) {
       const [download] = await Promise.all([
         page.waitForURL((url) => url.href.startsWith(downloadTarget), { timeout: 15000 }).catch(() => null),

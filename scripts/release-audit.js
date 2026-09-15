@@ -11,6 +11,9 @@ const edgePath = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge
 const outputPath = path.resolve(__dirname, "../validation/release-report.json");
 const cssPath = path.resolve(__dirname, "../styles.css");
 const configPath = path.resolve(__dirname, "../site-config.js");
+// 安装包和更新源都发布在这里，由 joyharness 仓库的 release.yml 写入并逐字节
+// 校验。官网只是读它，所以这里写死的是「该指向哪」，不是「现在指向哪」。
+const DOWNLOAD_ORIGIN = "https://joyharness-1305183734.cos.ap-shanghai.myqcloud.com/";
 // 版本历史页 2026-09-14 下线（发布记录统一放在 GitHub Releases）。
 // validate-site.js 当时同步了，这里漏了 —— 于是审计一直要求一个不存在的页面。
 const routes = ["/", "/guide/", "/support/", "/privacy/"];
@@ -123,35 +126,48 @@ function assert(condition, message) {
   const headers = await (await page.request.get(`${siteUrl}/_headers`)).text();
   assert(headers.includes("X-Content-Type-Options") && headers.includes("Permissions-Policy"), "_headers: security headers missing");
 
-  // 本站自己托管安装包，于是「站内这一份是不是最新那一版」没有任何东西在管。
-  // validate-site 比的是「下载到的字节 == 仓库里的字节」，仓库里放着旧包时它
-  // 两边都对，照样放行 —— 2026-09-15 官网就这样对外发了一整天装不起来的包。
-  // 这里改成跟 GitHub Release 上那一份比，那才是真正发出去的东西。
+  // 安装包不在这个仓库里了，改由对象存储发布。于是「发出去的那一份对不对」
+  // 更该查而不是更不该查：仓库里的副本至少跟着代码一起 review，桶里的东西被
+  // 改了、被删了、权限被调回私有，本地什么都看不出来。
+  //
+  // 从前这里比的是「站内副本 == Release 副本」，而 validate-site 比的是「下载
+  // 到的字节 == 仓库里的字节」—— 仓库里放着旧包时两边都对，照样放行，
+  // 2026-09-15 官网就这样对外发了一整天装不起来的包。现在把包真的从桶里拉
+  // 下来算 sha256，跟 Release 上发出去的那一份比。一次请求同时证明了三件独立
+  // 会坏的事：桶还在、还是公有读、发的还是那个签过名公证过的文件。
   const configSource = fs.readFileSync(configPath, "utf8");
   const configuredDownload = configSource.match(/downloadUrl:\s*"([^"]*)"/)?.[1] || "";
-  assert(configuredDownload.startsWith("/downloads/"),
-    `download: downloadUrl 不是站内直链（${configuredDownload || "未配置"}）`);
-
-  const servedPath = path.resolve(__dirname, "..", configuredDownload.replace(/^\//, ""));
-  assert(fs.existsSync(servedPath), `download: ${configuredDownload} 在仓库里不存在`);
-  const servedDigest = crypto.createHash("sha256").update(fs.readFileSync(servedPath)).digest("hex");
+  assert(configuredDownload.startsWith(DOWNLOAD_ORIGIN),
+    `download: downloadUrl 不在发布用的对象存储上（${configuredDownload || "未配置"}）`);
 
   github = await request.newContext(proxyServer ? { proxy: { server: proxyServer } } : {});
   const latestResponse = await github.get("https://api.github.com/repos/yongboxia-hue/joyharness/releases/latest",
     { headers: { Accept: "application/vnd.github+json" } });
-  assert(latestResponse.ok(), `download: 读不到最新 Release（HTTP ${latestResponse.status()}），无法判断站内这份包是否过期`);
+  assert(latestResponse.ok(), `download: 读不到最新 Release（HTTP ${latestResponse.status()}），无法判断官网指的这份是否过期`);
   const latest = await latestResponse.json();
 
   const expectedName = configuredDownload.split("/").pop();
   assert(expectedName === `JoyHarness-macos-${latest.tag_name}.dmg`,
-    `download: 站内这份是 ${expectedName}，最新的 Release 是 ${latest.tag_name}`);
+    `download: 官网指向 ${expectedName}，最新的 Release 是 ${latest.tag_name}`);
 
   const digestAsset = latest.assets.find((asset) => asset.name === `${expectedName}.sha256`);
   assert(digestAsset, `download: Release ${latest.tag_name} 里没有 ${expectedName}.sha256，没法核对`);
   const publishedDigest = (await (await github.get(digestAsset.browser_download_url)).text()).trim().split(/\s+/)[0];
-  assert(servedDigest === publishedDigest,
-    `download: 站内这份包和 Release ${latest.tag_name} 发出去的不是同一个文件`
-    + `（站内 ${servedDigest.slice(0, 12)}…，Release ${publishedDigest.slice(0, 12)}…）`);
+
+  // 走 page.request 而不是上面那个 github 上下文：桶在国内，直连就是访客走的
+  // 路径，套上给 GitHub 用的代理反而不是在测真实链路。
+  const hosted = await page.request.get(configuredDownload, { timeout: 180000 });
+  assert(hosted.ok(), `download: ${configuredDownload} 取不到（HTTP ${hosted.status()}）`);
+  const hostedDigest = crypto.createHash("sha256").update(await hosted.body()).digest("hex");
+  assert(hostedDigest === publishedDigest,
+    `download: 桶里这份和 Release ${latest.tag_name} 发出去的不是同一个文件`
+    + `（桶里 ${hostedDigest.slice(0, 12)}…，Release ${publishedDigest.slice(0, 12)}…）`);
+
+  // 点击存盘而不是在浏览器里打开一个二进制流，现在完全靠服务端这个头 ——
+  // 页面上的 download 属性跨域会被忽略，指望不上。
+  const disposition = hosted.headers()["content-disposition"] || "";
+  assert(disposition.includes("attachment"),
+    `download: 桶没有返回 attachment 的 Content-Disposition（${disposition || "无"}）`);
 
   const css = fs.readFileSync(cssPath, "utf8");
   assert(!/font-size\s*:[^;]*vw/.test(css), "styles: viewport-scaled font size found");
@@ -164,7 +180,7 @@ function assert(condition, message) {
     seo: { uniqueTitles: titles.size, uniqueDescriptions: descriptions.size, canonicalsInSitemap: canonicals.size },
     sgo: { robots: true, llms: true, llmsFull: true, structuredData: true },
     deployment: { securityHeaders: true, originConfigurator: true },
-    download: { file: expectedName, matchesRelease: latest.tag_name },
+    download: { file: expectedName, matchesRelease: latest.tag_name, hostedDigestMatches: true },
     css: { fixedTypography: true, noGradients: true, noNegativeLetterSpacing: true },
     pass: true,
   };
