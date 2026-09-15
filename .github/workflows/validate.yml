@@ -5,6 +5,18 @@ on:
     branches: [ main ]
   pull_request:
   workflow_dispatch: {}
+  # The installer is published elsewhere now, so a release no longer touches
+  # this repository -- and audit:release, which is what proves the download the
+  # site links to is the current release, stopped having anything to trigger it.
+  # Everything it guards fails silently and from the outside: an object deleted
+  # or overwritten by hand, the bucket flipped back to private, the storage plan
+  # expired, the account in arrears. The download 404s and nothing here notices.
+  #
+  # Weekly rather than daily because publishing already verifies the bytes it
+  # uploaded by reading them back; this is the drift canary, not the primary
+  # check, and each run pulls the package to hash it.
+  schedule:
+    - cron: "17 3 * * 1"
 
 jobs:
   validate:
