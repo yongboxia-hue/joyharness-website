@@ -4,6 +4,6 @@ window.JOYHARNESS_SITE_CONFIG = {
   // .sha256 供校验，完整更新记录仍由页面上的「前往下载页」通向 Release 页。
   // 换版本时只改这一行，同时把新的 .dmg 和 .sha256 放进 downloads/。
   // 页面 HTML 里不写版本号，所以别处不用动。
-  downloadUrl: "/downloads/JoyHarness-macos-v0.1.7.dmg",
+  downloadUrl: "/downloads/JoyHarness-macos-v0.1.8.dmg",
   sourceUrl: "https://github.com/yongboxia-hue/joyharness",
 };
