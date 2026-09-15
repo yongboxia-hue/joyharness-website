@@ -1,4 +1,5 @@
-const { chromium } = require("playwright");
+const { chromium, request } = require("playwright");
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -9,10 +10,17 @@ let server;
 const edgePath = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge";
 const outputPath = path.resolve(__dirname, "../validation/release-report.json");
 const cssPath = path.resolve(__dirname, "../styles.css");
+const configPath = path.resolve(__dirname, "../site-config.js");
 // 版本历史页 2026-09-14 下线（发布记录统一放在 GitHub Releases）。
 // validate-site.js 当时同步了，这里漏了 —— 于是审计一直要求一个不存在的页面。
 const routes = ["/", "/guide/", "/support/", "/privacy/"];
 let browser;
+let github;
+// 站内页面走 127.0.0.1，不需要代理；GitHub 要。国内直连
+// release-assets.githubusercontent.com 是超时而不是报错，不接代理的话下面这条
+// 断言会伪装成「GitHub 挂了」。CI 上没有这些环境变量，自然直连。
+const proxyServer = process.env.HTTPS_PROXY || process.env.https_proxy
+  || process.env.HTTP_PROXY || process.env.http_proxy;
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -115,6 +123,36 @@ function assert(condition, message) {
   const headers = await (await page.request.get(`${siteUrl}/_headers`)).text();
   assert(headers.includes("X-Content-Type-Options") && headers.includes("Permissions-Policy"), "_headers: security headers missing");
 
+  // 本站自己托管安装包，于是「站内这一份是不是最新那一版」没有任何东西在管。
+  // validate-site 比的是「下载到的字节 == 仓库里的字节」，仓库里放着旧包时它
+  // 两边都对，照样放行 —— 2026-09-15 官网就这样对外发了一整天装不起来的包。
+  // 这里改成跟 GitHub Release 上那一份比，那才是真正发出去的东西。
+  const configSource = fs.readFileSync(configPath, "utf8");
+  const configuredDownload = configSource.match(/downloadUrl:\s*"([^"]*)"/)?.[1] || "";
+  assert(configuredDownload.startsWith("/downloads/"),
+    `download: downloadUrl 不是站内直链（${configuredDownload || "未配置"}）`);
+
+  const servedPath = path.resolve(__dirname, "..", configuredDownload.replace(/^\//, ""));
+  assert(fs.existsSync(servedPath), `download: ${configuredDownload} 在仓库里不存在`);
+  const servedDigest = crypto.createHash("sha256").update(fs.readFileSync(servedPath)).digest("hex");
+
+  github = await request.newContext(proxyServer ? { proxy: { server: proxyServer } } : {});
+  const latestResponse = await github.get("https://api.github.com/repos/yongboxia-hue/joyharness/releases/latest",
+    { headers: { Accept: "application/vnd.github+json" } });
+  assert(latestResponse.ok(), `download: 读不到最新 Release（HTTP ${latestResponse.status()}），无法判断站内这份包是否过期`);
+  const latest = await latestResponse.json();
+
+  const expectedName = configuredDownload.split("/").pop();
+  assert(expectedName === `JoyHarness-macos-${latest.tag_name}.dmg`,
+    `download: 站内这份是 ${expectedName}，最新的 Release 是 ${latest.tag_name}`);
+
+  const digestAsset = latest.assets.find((asset) => asset.name === `${expectedName}.sha256`);
+  assert(digestAsset, `download: Release ${latest.tag_name} 里没有 ${expectedName}.sha256，没法核对`);
+  const publishedDigest = (await (await github.get(digestAsset.browser_download_url)).text()).trim().split(/\s+/)[0];
+  assert(servedDigest === publishedDigest,
+    `download: 站内这份包和 Release ${latest.tag_name} 发出去的不是同一个文件`
+    + `（站内 ${servedDigest.slice(0, 12)}…，Release ${publishedDigest.slice(0, 12)}…）`);
+
   const css = fs.readFileSync(cssPath, "utf8");
   assert(!/font-size\s*:[^;]*vw/.test(css), "styles: viewport-scaled font size found");
   assert(!/linear-gradient|radial-gradient/.test(css), "styles: gradient decoration found");
@@ -126,14 +164,17 @@ function assert(condition, message) {
     seo: { uniqueTitles: titles.size, uniqueDescriptions: descriptions.size, canonicalsInSitemap: canonicals.size },
     sgo: { robots: true, llms: true, llmsFull: true, structuredData: true },
     deployment: { securityHeaders: true, originConfigurator: true },
+    download: { file: expectedName, matchesRelease: latest.tag_name },
     css: { fixedTypography: true, noGradients: true, noNegativeLetterSpacing: true },
     pass: true,
   };
   fs.writeFileSync(outputPath, `${JSON.stringify(report, null, 2)}\n`);
+  await github?.dispose();
   await browser.close();
   await server?.stop();
   console.log(JSON.stringify(report));
 })().catch(async (error) => {
+  await github?.dispose();
   await browser?.close();
   await server?.stop();
   console.error(error);
