@@ -12,11 +12,16 @@ on:
   # or overwritten by hand, the bucket flipped back to private, the storage plan
   # expired, the account in arrears. The download 404s and nothing here notices.
   #
-  # Weekly rather than daily because publishing already verifies the bytes it
-  # uploaded by reading them back; this is the drift canary, not the primary
-  # check, and each run pulls the package to hash it.
+  # Daily. This was weekly when publishing to the bucket happened inside the
+  # release workflow, where a failure was loud and immediate. It does not: the
+  # runner cannot reach the bucket at any useful speed, so the last hop runs
+  # from a machine in China afterwards, and a release that is published but not
+  # yet mirrored leaves the site serving the previous version with nothing
+  # complaining. This is what complains -- audit:release compares the bytes the
+  # site links to against the newest release -- so the gap between those two
+  # being visible is worth a daily 21MB.
   schedule:
-    - cron: "17 3 * * 1"
+    - cron: "17 3 * * *"
 
 jobs:
   validate:
